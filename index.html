@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<script type="module">
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+  function auto_focus() {
+    const canvas = document.getElementsByTagName("canvas");
+    if (!canvas.length) {
+      setTimeout(auto_focus, 100);
+    } else {
+      canvas[0].focus();
+    }
+  }
+
+  const example = getParameterByName('example');
+  if (!example) {
+    const text = document.createTextNode("To load a specific example, add the query parameter example=[example], example: index.html?example=sprite");
+    const elem = document.createElement("p");
+    elem.appendChild(text);
+    document.body.append(elem);
+  } else {
+    import('./wasm/' + example + '.js')
+            .then(module => {
+              module.default();
+              auto_focus();
+            });
+  }
+</script>
+</body>
+</html>
